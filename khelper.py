@@ -119,9 +119,13 @@ def mapply_patchwork(argv):
 
 funcs = {
 	'test_send-email': test_sendemail,
+	'te': test_sendemail,
 	'mapply': mapply,
+	'ma': mapply,
 	'mapply_patchwork': mapply_patchwork,
+	'mp': mapply_patchwork,
 	'apply_patchwork': apply_patchwork,
+	'ap': apply_patchwork,
 }
 
 def main():
