@@ -26,20 +26,29 @@ def test_sendemail(argv):
 	for i in range(2, len(argv)):
 		Popen(['git', 'send-email', '--suppress-cc', 'all', '--to', email,  argv[i]]).communicate()
 
-def mapply(argv):
-	files = listdir('.')
-
+def get_patchfile_names(argv):
 	i = int(argv[2])
 	end = int(argv[3])
+	files = listdir('.')
+	ret_files = []
+
+	files.sort()
+
 	for file in files:
 		if file.endswith('patch'):
 			if file.startswith('%.04d' % i):
-				p = Popen(['git', 'am', file])
-				output = p.communicate()
+				ret_files.append(file)
 				i += 1
 
 		if i > end:
 			break
+
+	return ret_files
+
+def mapply(argv):
+	files = get_patchfile_names(argv)
+	for file in files:
+		Popen(['git', 'am', file]).communicate()
 
 def get_patchname(filename):
 	f = open(filename)
