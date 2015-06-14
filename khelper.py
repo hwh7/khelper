@@ -14,6 +14,7 @@ def print_usage(argv):
 	print 'mapply [STARTING PATCH_FILE_NUMBER] [END PATCH_FILE_NUMBER]: apply multiple patch files which are prefixed by the number'
 	print 'mapply_patchwork [URL_FOR_PATCHWORK_PATCH_LIST] [FIRST PATCH ID] [# OF SUCCESSIVE PATCHES]: apply multiple patches which are found in patchwork'
 	print 'apply_patchwork [PATCH ID]: apply the patch which is found in patchwork'
+	print 'mcheckpatch [STARTING PATCH_FILE_NUMBER] [END PATCH_FILE_NUMBER]: run the script checkpatch.pl for multiple patch files'
 
 def get_usermail():
 	p = Popen(['git', 'config', 'user.email'], stdout=PIPE)
@@ -49,6 +50,11 @@ def mapply(argv):
 	files = get_patchfile_names(argv)
 	for file in files:
 		Popen(['git', 'am', file]).communicate()
+
+def mcheckpatch(argv):
+	files = get_patchfile_names(argv)
+	for file in files:
+		Popen(['./scripts/checkpatch.pl', file]).communicate()
 
 def get_patchname(filename):
 	f = open(filename)
@@ -135,6 +141,8 @@ funcs = {
 	'mp': mapply_patchwork,
 	'apply_patchwork': apply_patchwork,
 	'ap': apply_patchwork,
+	'mcheckpatch': mcheckpatch,
+	'mc': mcheckpatch,
 }
 
 def main():
