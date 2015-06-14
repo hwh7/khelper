@@ -13,6 +13,7 @@ def print_usage(argv):
 	print 'test_sendemail [PATCH_FILES]: send patch files only to me'
 	print 'mapply [STARTING PATCH_FILE_NUMBER] [END PATCH_FILE_NUMBER]: apply multiple patch files which are prefixed by the number'
 	print 'mapply_patchwork [URL_FOR_PATCHWORK_PATCH_LIST] [FIRST PATCH ID] [# OF SUCCESSIVE PATCHES]: apply multiple patches which are found in patchwork'
+	print 'apply_patchwork [PATCH ID]: apply the patch which is found in patchwork'
 
 def get_usermail():
 	p = Popen(['git', 'config', 'user.email'], stdout=PIPE)
@@ -83,6 +84,18 @@ def convert_to_filename(patchname, idx):
 
 	return to_be_filename[:57] + '.patch'
 
+def apply_patchwork_id(id, idx):
+	filename = 'patch-%s-%f.patch' % (id, time())
+	p = Popen(['wget', '-q', '-O', filename , 'https://patchwork.kernel.org/patch/%s/mbox/' % id]).communicate()
+	patchname = get_patchname(filename)
+	to_be_filename = convert_to_filename(patchname, idx)
+	Popen(['mv', filename , to_be_filename])
+	Popen(['git', 'am', to_be_filename]).communicate()
+
+def apply_patchwork(argv):
+	id = argv[2]
+	apply_patchwork_id(id, 0)
+
 def mapply_patchwork(argv):
 	url = argv[2]
 	start_id = argv[3]
@@ -100,12 +113,7 @@ def mapply_patchwork(argv):
 	get_download = False
 	for id in ids:
 		if i < len+1 and (get_download or start_id == id):
-			filename = 'patch-%s-%f.patch' % (id, time())
-			p = Popen(['wget', '-q', '-O', filename , 'https://patchwork.kernel.org/patch/%s/mbox/' % id]).communicate()
-			patchname = get_patchname(filename)
-			to_be_filename = convert_to_filename(patchname, i)
-			Popen(['mv', filename , to_be_filename])
-			Popen(['git', 'am', to_be_filename]).communicate()
+			apply_patchwork_id(id, i)
 			get_download = True
 			i += 1
 
@@ -113,6 +121,7 @@ funcs = {
 	'test_send-email': test_sendemail,
 	'mapply': mapply,
 	'mapply_patchwork': mapply_patchwork,
+	'apply_patchwork': apply_patchwork,
 }
 
 def main():
