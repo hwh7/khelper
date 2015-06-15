@@ -24,8 +24,10 @@ def get_usermail():
 def test_sendemail(argv):
 	email = get_usermail()[0][0:-1]
 
+	command = ['git', 'send-email', '--suppress-cc', 'all', '--to', email]
 	for i in range(2, len(argv)):
-		Popen(['git', 'send-email', '--suppress-cc', 'all', '--to', email,  argv[i]]).communicate()
+		command.append(argv[i])
+	Popen(command).communicate()
 
 def get_patchfile_names(argv):
 	i = int(argv[2])
