@@ -22,12 +22,31 @@ def get_usermail():
 	return output
 
 def test_sendemail(argv):
+	dest_cmd = ['--to', '--cc', '--bcc']
 	email = get_usermail()[0][0:-1]
+	print 'Your email address is <%s>' % email
+	print 'The target patches are:'
 
+	patches = []
 	command = ['git', 'send-email', '--suppress-cc', 'all', '--to', email]
+	i = 0
 	for i in range(2, len(argv)):
-		command.append(argv[i])
+		if argv[i] in dest_cmd:
+			break
+		patches.append(argv[i])
+	command = command + patches
 	Popen(command).communicate()
+
+	print '\n##### Sent the patches to <%s> for testing'  % email
+	print '##### Check your mailbox'
+
+	command = ['git', 'send-email'] + patches
+	for j in range(i, len(argv)):
+		command.append(argv[j])
+
+	response = raw_input('##### Is it OK to send them really? (y/N) ')
+	if response == ('y' or 'Y'):
+		Popen(command).communicate()
 
 def get_patchfile_names(argv):
 	i = int(argv[2])
