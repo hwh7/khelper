@@ -9,12 +9,12 @@ from time import time
 
 def print_usage(argv):
 	print 'Khelper for kernel development'
-	print 'Usage: %s [COMMAND] [ARGUMENTS]' % argv[0]
-	print 'test_sendemail [PATCH_FILES]: send patch files only to me'
-	print 'mapply [STARTING PATCH_FILE_NUMBER] [END PATCH_FILE_NUMBER]: apply multiple patch files which are prefixed by the number'
-	print 'mapply_patchwork [URL_FOR_PATCHWORK_PATCH_LIST] [FIRST PATCH ID] [# OF SUCCESSIVE PATCHES]: apply multiple patches which are found in patchwork'
-	print 'apply_patchwork [PATCH ID]: apply the patch which is found in patchwork'
-	print 'mcheckpatch [STARTING PATCH_FILE_NUMBER] [END PATCH_FILE_NUMBER]: run the script checkpatch.pl for multiple patch files'
+	print 'Usage: %s [command] [arguments]' % argv[0]
+	print 'test_sendemail(te) [patch_files]: send patch files only to me'
+	print 'mapply(ma) [starting idx] [end idx]: apply multiple patch files which are prefixed by the number'
+	print 'mapply_patchwork(mp) [url_for_patchwork_patch_list] [first patch id] [# of successive patches]: apply multiple patches which are found in patchwork'
+	print 'apply_patchwork(ap) [patch id]: apply the patch which is found in patchwork'
+	print 'mcheckpatch(mc) [starting idx] [end idx]: run the script checkpatch.pl for multiple patch files'
 
 def get_usermail():
 	p = Popen(['git', 'config', 'user.email'], stdout=PIPE)
